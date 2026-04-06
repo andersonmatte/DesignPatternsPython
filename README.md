@@ -432,36 +432,6 @@ print(f"Log registrado: {resultado['log_id']}")
 - **Análise:** Processamento e interpretação
 - **Relatório:** Geração de resultados
 
-### Flyweight
-
-**Propósito:** Compartilhar estado intrínseco para otimizar uso de memória.
-
-**Implementação:** Compartilhamento de dados genéticos entre múltiplas análises:
-
-- **Dados Proteicos:** Sequências de aminoácidos compartilhadas
-- **Estado Extrínseco:** Contexto específico de cada análise
-- **Cache:** Reutilização eficiente de estruturas
-
-### Front Controller
-
-**Propósito:** Centralizar requisições e fornecer tratamento unificado.
-
-**Implementação:** Controlador frontal para sistema de bioinformática:
-
-- **Roteamento:** Direcionamento para módulos específicos
-- **Validação:** Verificação de parâmetros e permissões
-- **Tratamento:** Gerenciamento de erros e exceções
-
-### Proxy
-
-**Propósito:** Controlar acesso a objetos, fornecendo interface intermediária.
-
-**Implementação:** Proxy de segurança para banco de dados genéticos:
-
-- **Controle de Acesso:** Validação de permissões de usuários
-- **Cache:** Otimização de consultas frequentes
-- **Logging:** Registro de operações de acesso
-
 ---
 
 ## Padrões Comportamentais
