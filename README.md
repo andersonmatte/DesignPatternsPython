@@ -205,6 +205,20 @@ pool.liberar_equipamento(equipamento)
 - **GenBank:** Formato com metadados estruturados
 - **Analisador Unificado:** Interface comum para todos os formatos
 
+```python
+# Exemplo: Adapter unificado para diferentes formatos
+from patterns.estruturais.adapter import FabricaAdapters
+
+factory = FabricaAdapters()
+adapter = factory.criar_adapter("UNIFICADO")
+
+# Detecta automaticamente o formato e analisa
+resultado = adapter.analisar_sequencia(">seq1\nATCGATCGATCGATCG")
+print(f"Formato detectado: {resultado['formato']}")
+print(f"Sequência: {resultado['sequencia']}")
+print(f"Comprimento: {resultado['comprimento']}")
+```
+
 ### Bridge
 
 **Propósito:** Desacoplar abstração da implementação, permitindo variação independente.
@@ -213,6 +227,19 @@ pool.liberar_equipamento(equipamento)
 
 - **Análises Genômicas:** Sequenciamento, alinhamento, expressão
 - **Algoritmos:** Needleman-Wunsch, BLAST, Smith-Waterman
+
+```python
+# Exemplo: Bridge separando análise e algoritmo
+from patterns.estruturais.bridge import AnaliseSequenciamento, AlinhamentoGlobal
+
+# Criar análise com algoritmo específico
+analise = AnaliseSequenciamento(AlinhamentoGlobal())
+resultado = analise.executar_analise("ATCGATCG", "referencia.fasta")
+
+print(f"Tipo de análise: {resultado['tipo_analise']}")
+print(f"Algoritmo usado: {resultado['algoritmo']}")
+print(f"Score de alinhamento: {resultado['score']}")
+```
 
 ### Composite
 
@@ -223,6 +250,25 @@ pool.liberar_equipamento(equipamento)
 - **Genes:** Componentes complexos com múltiplos nucleotídeos
 - **Nucleotídeos:** Componentes básicos individuais
 - **Proteínas:** Componentes compostos
+
+```python
+# Exemplo: Composite para estrutura genômica
+from patterns.estruturais.composite import Genoma, SequenciaNucleotidica, BaseNitrogenada
+
+# Criar estrutura hierárquica
+genoma = Genoma("Genoma Humano")
+cromossomo1 = SequenciaNucleotidica("Cromossomo 1")
+cromossomo1.adicionar_componente(BaseNitrogenada("A", 1000))
+cromossomo1.adicionar_componente(BaseNitrogenada("T", 1001))
+cromossomo1.adicionar_componente(BaseNitrogenada("C", 1002))
+cromossomo1.adicionar_componente(BaseNitrogenada("G", 1003))
+
+genoma.adicionar_componente(cromossomo1)
+
+# Tratar uniformemente
+print(f"Tamanho do genoma: {genoma.obter_tamanho()}")
+print(f"Composição: {genoma.obter_composicao()}")
+```
 
 ### Decorator
 
@@ -235,7 +281,147 @@ pool.liberar_equipamento(equipamento)
 - **Com Relatório:** Adição de geração de relatórios
 - **Composição:** Múltiplas camadas de funcionalidade
 
+```python
+# Exemplo: Decorator para enriquecer análise
+from patterns.estruturais.decorator import (
+    AnaliseBasica, AnaliseComValidacao, AnaliseComRelatorio, AnaliseComCache
+)
+
+# Criar análise base e adicionar decoradores
+analise = AnaliseBasica("Análise Genômica")
+analise = AnaliseComValidacao(analise)
+analise = AnaliseComRelatorio(analise)
+analise = AnaliseComCache(analise)
+
+# Executar com todas as funcionalidades
+resultado = analise.executar("dados_genomicos.fasta")
+print(f"Resultado: {resultado['resultado']}")
+print(f"Validado: {resultado['validado']}")
+print(f"Relatório gerado: {resultado['relatorio']}")
+print(f"Cache usado: {resultado['cache']}")
+```
+
 ### Facade
+
+**Propósito:** Fornecer interface simplificada para subsistemas complexos.
+
+**Implementação:** Fachada unificada para análise genômica completa:
+
+- **Sequenciamento:** Extração e preparação de amostras
+- **Alinhamento:** Comparação com referências
+- **Análise:** Processamento e interpretação
+- **Relatório:** Geração de resultados
+
+```python
+# Exemplo: Facade simplificando sistema complexo
+from patterns.estruturais.facade import SistemaBioinformaticaFacade
+
+# Interface única para todo o processo
+facade = SistemaBioinformaticaFacade()
+resultado = facade.analisar_amostra_completa(
+    amostra="sangue_paciente001",
+    tipo_analise="genomica",
+    referencia="hg38"
+)
+
+print(f"Status: {resultado['status']}")
+print(f"Sequenciamento: {resultado['sequenciamento']['status']}")
+print(f"Alinhamento: {resultado['alinhamento']['status']}")
+print(f"Análise: {resultado['analise']['status']}")
+print(f"Relatório: {resultado['relatorio']['arquivo']}")
+```
+
+### Flyweight
+
+**Propósito:** Compartilhar estado intrínseco para otimizar uso de memória.
+
+**Implementação:** Compartilhamento de dados genéticos entre múltiplas análises:
+
+- **Dados Proteicos:** Sequências de aminoácidos compartilhadas
+- **Estado Extrínseco:** Contexto específico de cada análise
+- **Cache:** Reutilização eficiente de estruturas
+
+```python
+# Exemplo: Flyweight para otimizar memória
+from patterns.estruturais.flyweight import (
+    DadoGeneticoFlyweightFactory, AnaliseGenomicaComFlyweight
+)
+
+factory = DadoGeneticoFlyweightFactory()
+
+# Reutilizar dados compartilhados
+proteina1 = factory.obter_flyweight_proteico("Hemoglobina", "MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNMIVIVLGHYKK")
+proteina2 = factory.obter_flyweight_proteico("Hemoglobina", "MVHLTPEEKSAVTALWGKVNVDEVGGEALGRLLVVYPWTQRFFESFGDLSTPDAVMGNPKVKAHGKKVLGAFSDGLAHLDNLKGTFATLSELHCDKLHVDPENFRLLGNMIVIVLGHYKK")
+
+# Mesmo objeto compartilhado
+print(f"Mesmo objeto: {proteina1 is proteina2}")
+
+# Análise com contexto extrínseco
+analise = AnaliseGenomicaComFlyweight()
+resultado1 = analise.analisar_com_contexto(proteina1, {"paciente": "001", "data": "2023-01-01"})
+resultado2 = analise.analisar_com_contexto(proteina2, {"paciente": "002", "data": "2023-01-02"})
+```
+
+### Front Controller
+
+**Propósito:** Centralizar requisições e fornecer tratamento unificado.
+
+**Implementação:** Controlador frontal para sistema de bioinformática:
+
+- **Roteamento:** Direcionamento para módulos específicos
+- **Validação:** Verificação de parâmetros e permissões
+- **Tratamento:** Gerenciamento de erros e exceções
+
+```python
+# Exemplo: Front Controller centralizando requisições
+from patterns.estruturais.front_controller import FrontController, Request
+
+# Criar requisição
+request = Request(
+    method="POST",
+    path="/analise/sequenciamento",
+    headers={"Authorization": "Bearer token123"},
+    body={"amostra": "paciente001", "plataforma": "illumina"}
+)
+
+# Processar através do controlador frontal
+controller = FrontController()
+response = controller.processar_requisicao(request)
+
+print(f"Status: {response.status_code}")
+print(f"Resultado: {response.body}")
+print(f"Headers: {response.headers}")
+```
+
+### Proxy
+
+**Propósito:** Controlar acesso a objetos, fornecendo interface intermediária.
+
+**Implementação:** Proxy de segurança para banco de dados genéticos:
+
+- **Controle de Acesso:** Validação de permissões de usuários
+- **Cache:** Otimização de consultas frequentes
+- **Logging:** Registro de operações de acesso
+
+```python
+# Exemplo: Proxy controlando acesso ao banco de dados
+from patterns.estruturais.proxy import BancoDadosGeneticosProxy
+
+# Criar proxy com controle de acesso
+banco_proxy = BancoDadosGeneticosProxy()
+
+# Tentar acesso sem permissão
+try:
+    resultado = banco_proxy.buscar_sequencia("BRCA1", "usuario_sem_permissao")
+except PermissionError as e:
+    print(f"Erro de acesso: {e}")
+
+# Acesso com permissão
+resultado = banco_proxy.buscar_sequencia("BRCA1", "pesquisador_autorizado")
+print(f"Sequência encontrada: {resultado['sequencia'][:50]}...")
+print(f"Cache usado: {resultado['cache']}")
+print(f"Log registrado: {resultado['log_id']}")
+```
 
 **Propósito:** Fornecer interface simplificada para subsistemas complexos.
 
@@ -292,6 +478,33 @@ pool.liberar_equipamento(equipamento)
 - **Desfazer:** Reversão de operações executadas
 - **Invocador:** Gerenciador de fila de comandos
 
+```python
+# Exemplo: Command para operações laboratoriais
+from patterns.comportamentais.command import (
+    SequenciarCommand, AlinharCommand, AnalisarCommand, InvocadorComandos
+)
+
+# Criar invocador de comandos
+invocador = InvocadorComandos()
+
+# Criar e executar comandos
+cmd_sequenciar = SequenciarCommand("Amostra_001", "illumina")
+cmd_alinhar = AlinharCommand("sequenciamento.fastq", "hg38")
+cmd_analisar = AnalisarCommand("alinhado.bam", "variacao")
+
+# Executar comandos
+invocador.executar_comando(cmd_sequenciar)
+invocador.executar_comando(cmd_alinhar)
+invocador.executar_comando(cmd_analisar)
+
+# Desfazer último comando
+invocador.desfazer_ultimo_comando()
+
+# Verificar histórico
+historico = invocador.obter_historico()
+print(f"Comandos executados: {len(historico)}")
+```
+
 ### Iterator
 
 **Propósito:** Acessar elementos de coleções sem expor estrutura interna.
@@ -302,6 +515,34 @@ pool.liberar_equipamento(equipamento)
 - **Proteínas:** Iteração sobre estruturas proteicas
 - **Resultados:** Percorrer análises processadas
 - **Abstração:** Interface unificada para diferentes coleções
+
+```python
+# Exemplo: Iterator para resultados de análises
+from patterns.comportamentais.iterator import (
+    ResultadosSequenciamento, ResultadosProteomicos, TipoDado
+)
+
+# Criar coleções de resultados
+resultados_seq = ResultadosSequenciamento()
+resultados_prot = ResultadosProteomicos()
+
+# Adicionar resultados
+resultados_seq.adicionar(ResultadoAnalise("SEQ001", TipoDado.SEQUENCIA, {"plataforma": "illumina"}))
+resultados_prot.adicionar(ResultadoAnalise("PROT001", TipoDado.PROTEINA, {"proteina": "Hemoglobina"}))
+
+# Iterar sobre sequenciamento
+iterador_seq = resultados_seq.criar_iterador()
+while iterador_seq.tem_proximo():
+    resultado = iterador_seq.proximo()
+    print(f"Sequência: {resultado.id_resultado}")
+
+# Iterar com filtros
+iterador_prot = resultados_prot.criar_iterador()
+iterador_prot.definir_filtro_peso(15000, 17000)  # Filtrar por peso molecular
+while iterador_prot.tem_proximo():
+    resultado = iterador_prot.proximo()
+    print(f"Proteína: {resultado.dados['proteina']}")
+```
 
 ### Mediator
 
@@ -314,6 +555,30 @@ pool.liberar_equipamento(equipamento)
 - **Orquestração:** Gerenciamento do fluxo de trabalho
 - **Desacoplamento:** Redução de dependências diretas
 
+```python
+# Exemplo: Mediator para coordenar componentes
+from patterns.comportamentais.mediator import (
+    CoordenadorAnalise, Sequenciador, Alinhador, Analisador
+)
+
+# Criar mediador
+mediador = CoordenadorAnalise()
+
+# Criar componentes
+sequenciador = Sequenciador(mediador)
+alinhador = Alinhador(mediador)
+analisador = Analisador(mediador)
+
+# Registrar componentes no mediador
+mediador.registrar_componente("sequenciador", sequenciador)
+mediador.registrar_componente("alinhador", alinhador)
+mediador.registrar_componente("analisador", analisador)
+
+# Iniciar processo coordenado
+sequenciador.sequenciar_amostra("Amostra_001")
+# O mediador coordena automaticamente o fluxo completo
+```
+
 ### Observer
 
 **Propósito:** Definir dependência um-para-muitos, notificando mudanças automaticamente.
@@ -325,11 +590,160 @@ pool.liberar_equipamento(equipamento)
 - **Eventos:** Mudanças de estado e conclusões
 - **Notificação:** Atualização automática de múltiplos observadores
 
+```python
+# Exemplo: Observer para notificação de análises
+from patterns.comportamentais.observer import (
+    Pesquisador, SistemaAlerta, AnaliseGenomica, TipoEvento
+)
+
+# Criar observadores
+pesquisador1 = Pesquisador("Dr. Silva", "silva@lab.com", "genomica")
+pesquisador2 = Pesquisador("Dra. Santos", "santos@lab.com", "proteomica")
+sistema_alerta = SistemaAlerta("Sistema de Alertas", "alto")
+
+# Criar análise (sujeito)
+analise = AnaliseGenomica("ANALISE_001", "Análise de BRCA1")
+
+# Registrar observadores
+analise.adicionar_observador(pesquisador1)
+analise.adicionar_observador(pesquisador2)
+analise.adicionar_observador(sistema_alerta)
+
+# Definir interesses
+pesquisador1.definir_interesses([TipoEvento.ANALISE_CONCLUIDA])
+pesquisador2.definir_interesses([TipoEvento.ANALISE_FALHOU])
+
+# Executar análise e notificar observadores
+analise.iniciar_analise()
+analise.concluir_analise({"variantes": 42, "qualidade": "alta"})
+```
+
 ### State
 
 **Propósito:** Permitir que objeto mude comportamento quando estado interno muda.
 
 **Implementação:** Estados de equipamentos laboratoriais:
+
+- **Disponível:** Pronto para uso, operações básicas
+- **Em Uso:** Ocupado em análise, operações limitadas
+- **Manutenção:** Indisponível temporariamente, operações de manutenção
+- **Comportamento:** Varia conforme estado atual
+
+```python
+# Exemplo: State para gerenciar estados de equipamento
+from patterns.comportamentais.state import EquipamentoLaboratorial
+
+# Criar equipamento
+microscopio = EquipamentoLaboratorial("Microscopio_001", "Microscópio Eletrônico")
+
+# Verificar estado inicial
+status = microscopio.verificar_status()
+print(f"Estado inicial: {status['estado_atual']}")
+
+# Ligando equipamento
+microscopio.ligar()
+
+# Iniciar uso
+microscopio.iniciar_uso("Dr. Silva")
+print(f"Em uso por: {microscopio.usuario_atual}")
+
+# Tentar usar por outro usuário (deve falhar)
+resultado = microscopio.iniciar_uso("Dra. Santos")
+print(f"Segunda tentativa: {resultado}")
+
+# Finalizar uso
+microscopio.finalizar_uso()
+
+# Iniciar manutenção
+microscopio.iniciar_manutencao("Técnico João")
+print(f"Em manutenção com: {microscopio.tecnico_manutencao}")
+```
+
+### Template Method
+
+**Propósito:** Definir esqueleto de algoritmo, delegando passos específicos para subclasses.
+
+**Implementação:** Pipeline de análise biológica com estrutura fixa:
+
+- **Estrutura Comum:** Preparação → Extração → Processamento → Finalização
+- **Variações:** Passos específicos por tipo de análise
+- **Extensibilidade:** Novos tipos de análise sem modificar estrutura
+- **Controle:** Ordem fixa de execução garantida
+
+```python
+# Exemplo: Template Method para pipelines de análise
+from patterns.comportamentais.template_method import (
+    PipelineGenomica, PipelineProteomica, PipelineTranscriptomica
+)
+
+# Criar pipelines específicos
+pipeline_genomica = PipelineGenomica("Análise BRCA1")
+pipeline_proteomica = PipelineProteomica("Análise Proteômica")
+pipeline_transcriptomica = PipelineTranscriptomica("Análise de Expressão")
+
+# Executar pipelines com estrutura comum mas implementações diferentes
+dados_teste = {"amostra": "Paciente_001", "tipo": "sangue"}
+
+resultado_genomica = pipeline_genomica.executar_analise_completa(dados_teste)
+print(f"Genômica: {resultado_genomica.obter_resumo()['status']}")
+
+resultado_proteomica = pipeline_proteomica.executar_analise_completa(dados_teste)
+print(f"Proteômica: {resultado_proteomica.obter_resumo()['status']}")
+
+resultado_transcriptomica = pipeline_transcriptomica.executar_analise_completa(dados_teste)
+print(f"Transcriptômica: {resultado_transcriptomica.obter_resumo()['status']}")
+```
+
+### Visitor
+
+**Propósito:** Adicionar novas operações a estrutura de objetos sem modificá-los.
+
+**Implementação:** Operações de análise sobre estruturas genéticas:
+
+- **Genes de Proteína:** Análise de expressão gênica
+- **Genes Reguladores:** Análise de função regulatória
+- **Visitantes:** Novas análises sem alterar classes existentes
+- **Double Dispatch:** Operação baseada em tipo de visitante e elemento
+
+```python
+# Exemplo: Visitor para análises moleculares
+from patterns.comportamentais.visitor import (
+    GeneProteina, GeneRegulador, GeneEstrutural, GeneHousekeeping,
+    AnalisadorMolecular, OtimizadorTerapeutico
+)
+
+# Criar diferentes tipos de genes
+gene_proteina = GeneProteina("BRCA1", "17", 43044295, "Proteína supressora de tumor")
+gene_regulador = GeneRegulador("TP53", "17", 7579472, "ativador")
+gene_estrutural = GeneEstrutural("ACTB", "7", 5524907, "Manutenção do citoesqueleto")
+gene_housekeeping = GeneHousekeeping("GAPDH", "12", 6656342, "Glicólise")
+
+# Configurar genes
+gene_proteina.definir_sequencia("ATCGATCGATCGATCG")
+gene_proteina.definir_expressao(2.5)
+gene_proteina.adicionar_dominio("RING")
+gene_proteina.adicionar_dominio("BRCT")
+
+# Criar visitantes
+analisador = AnalisadorMolecular()
+otimizador = OtimizadorTerapeutico()
+
+# Aplicar visitantes aos genes
+genes = [gene_proteina, gene_regulador, gene_estrutural, gene_housekeeping]
+
+for gene in genes:
+    # Análise molecular
+    resultado_analise = gene.aceitar(analisador)
+    print(f"{gene.nome}: {resultado_analise['tipo']}")
+    
+    # Análise terapêutica
+    resultado_terapeutico = gene.aceitar(otimizador)
+    print(f"  Score terapêutico: {resultado_terapeutico.get('score', 0):.2f}")
+
+# Obter alvos terapêuticos identificados
+alvos = otimizador.obter_alvos_terapeuticos()
+print(f"\nAlvos terapêuticos identificados: {len(alvos)}")
+```
 
 - **Disponível:** Pronto para uso, operações básicas
 - **Em Uso:** Ocupado em análise, operações limitadas
