@@ -1,0 +1,70 @@
+# Design Patterns em Python - Sistema de Bioinformática
+# Dependências necessárias para execução dos exemplos
+
+# Para testes unitários
+unittest>=1.0.0
+
+# Para análise de dados bioinformáticos (exemplos futuros)
+numpy>=1.21.0
+pandas>=1.3.0
+biopython>=1.79
+
+# Para visualização (exemplos futuros)
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Para logging e configuração
+logging>=0.4.9.6
+
+# Para processamento concorrente
+threading>=1.0
+
+# Para manipulação de dados temporais
+time>=1.0
+
+# Para geração de IDs únicos
+uuid>=1.30
+
+# Para cálculos matemáticos e estatísticos
+math>=1.0
+statistics>=1.0
+
+# Para suporte a tipos e anotações
+typing>=3.9.0
+
+# Para suporte a classes abstratas
+abc>=1.0
+
+# Para enumerações
+enum>=0.4.1
+
+# Para manipulação de arquivos e paths
+os>=1.0
+pathlib>=1.0
+
+# Para serialização de dados
+json>=2.0.9
+
+# Para hash e criptografia básica
+hashlib>=1.0
+
+# Para expressões regulares
+re>=2.2.1
+
+# Para cópia profunda de objetos
+copy>=1.0
+
+# Para coleções especializadas
+collections>=1.0
+
+# Para funções de ordem superior
+functools>=1.0
+
+# Para iteração avançada
+itertools>=1.0
+
+# Para gerenciamento de contexto
+contextlib>=1.0
+
+# Para tratamento de exceções
+exceptions>=1.0
