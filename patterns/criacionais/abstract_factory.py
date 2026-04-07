@@ -13,7 +13,7 @@ class Centrifuga(Protocol):
 class Microscopio(Protocol):
     """Interface para microscópios."""
     
-    def observar(self, amostra: str) -> str:
+    def observar(self, amostra: str, magnificacao: int) -> str:
         """Observa amostra no microscópio."""
         pass
 
@@ -21,7 +21,7 @@ class Microscopio(Protocol):
 class Espectrofotometro(Protocol):
     """Interface para espectrofotômetros."""
     
-    def medir_absorbancia(self, amostra: str, comprimento_onda: int) -> float:
+    def medir_absorbancia(self, comprimento_onda: str) -> str:
         """Mede absorbância da amostra."""
         pass
 
@@ -31,22 +31,21 @@ class CentrifugaGenetica:
     """Centrífuga especializada para análise genética."""
     
     def centrifugar(self, amostra: str, velocidade: int) -> str:
-        return f"Centrifugando amostra {amostra} a {velocidade} rpm para extração de DNA/RNA"
+        return f"Centrífuga Genética: Centrifugando amostra {amostra} a {velocidade} RPM para extração de DNA/RNA"
 
 
 class MicroscopioGenetico:
     """Microscópio especializado para análise genética."""
     
-    def observar(self, amostra: str) -> str:
-        return f"Observando cromossomos na amostra {amostra} com microscópio genético"
+    def observar(self, amostra: str, magnificacao: int) -> str:
+        return f"Microscópio Genético: Observando cromossomos na amostra {amostra} com {magnificacao}x de magnificação"
 
 
 class EspectrofotometroGenetico:
     """Espectrofotômetro especializado para análise genética."""
     
-    def medir_absorbancia(self, amostra: str, comprimento_onda: int) -> float:
-        # Simulação de medição para DNA/RNA
-        return 0.8 + (comprimento_onda % 100) / 1000
+    def medir_absorbancia(self, comprimento_onda: str) -> str:
+        return f"Espectrofotômetro Genético: Medindo absorbância em {comprimento_onda} - Resultado: 0.85"
 
 
 # Implementações específicas para Bioquímica
@@ -54,22 +53,21 @@ class CentrifugaBioquimica:
     """Centrífuga especializada para análise bioquímica."""
     
     def centrifugar(self, amostra: str, velocidade: int) -> str:
-        return f"Centrifugando amostra {amostra} a {velocidade} rpm para separação de proteínas"
+        return f"Centrífuga Bioquímica: Centrifugando amostra {amostra} a {velocidade} RPM para separação de proteínas"
 
 
 class MicroscopioBioquimico:
     """Microscópio especializado para análise bioquímica."""
     
-    def observar(self, amostra: str) -> str:
-        return f"Observando estruturas proteicas na amostra {amostra} com microscópio bioquímico"
+    def observar(self, amostra: str, magnificacao: int) -> str:
+        return f"Microscópio Bioquímico: Observando estruturas proteicas na amostra {amostra} com {magnificacao}x de magnificação"
 
 
 class EspectrofotometroBioquimico:
     """Espectrofotômetro especializado para análise bioquímica."""
     
-    def medir_absorbancia(self, amostra: str, comprimento_onda: int) -> float:
-        # Simulação de medição para proteínas
-        return 0.6 + (comprimento_onda % 80) / 1000
+    def medir_absorbancia(self, comprimento_onda: str) -> str:
+        return f"Espectrofotômetro Bioquímico: Medindo absorbância em {comprimento_onda} - Resultado: 0.65"
 
 
 # Implementações específicas para Molecular
@@ -77,22 +75,70 @@ class CentrifugaMolecular:
     """Centrífuga especializada para análise molecular."""
     
     def centrifugar(self, amostra: str, velocidade: int) -> str:
-        return f"Centrifugando amostra {amostra} a {velocidade} rpm para análise molecular"
+        return f"Centrifugando amostra {amostra} a {velocidade} RPM para análise molecular"
 
 
 class MicroscopioMolecular:
     """Microscópio especializado para análise molecular."""
     
-    def observar(self, amostra: str) -> str:
-        return f"Observando estruturas moleculares na amostra {amostra} com microscópio molecular"
+    def observar(self, amostra: str, magnificacao: int) -> str:
+        return f"Microscópio Molecular: Observando estruturas moleculares na amostra {amostra} com {magnificacao}x de magnificação"
 
 
 class EspectrofotometroMolecular:
     """Espectrofotômetro especializado para análise molecular."""
     
-    def medir_absorbancia(self, amostra: str, comprimento_onda: int) -> float:
-        # Simulação de medição para análise molecular
-        return 0.7 + (comprimento_onda % 90) / 1000
+    def medir_absorbancia(self, comprimento_onda: str) -> str:
+        return f"Espectrofotômetro Molecular: Medindo absorbância em {comprimento_onda} - Resultado: 0.75"
+
+
+class KitExtracao(Protocol):
+    """Interface para kits de extração."""
+    
+    def extrair_dna(self, amostra: str) -> str:
+        """Extrai DNA da amostra."""
+        pass
+    
+    def extrair_proteina(self, amostra: str) -> str:
+        """Extrai proteína da amostra."""
+        pass
+
+
+class Reagentes(Protocol):
+    """Interface para reagentes."""
+    
+    def preparar_buffer(self, tipo: str) -> str:
+        """Prepara buffer do tipo especificado."""
+        pass
+
+
+# Implementações de kits de extração
+class KitGenetico:
+    """Kit de extração genética."""
+    
+    def extrair_dna(self, amostra: str) -> str:
+        return f"Kit Genético: Extração de DNA da amostra {amostra} - DNA extraído com sucesso"
+    
+    def extrair_proteina(self, amostra: str) -> str:
+        return f"Kit Genético: Extração de proteína da amostra {amostra} - Proteína extraída com sucesso"
+
+
+class KitBioquimico:
+    """Kit de extração bioquímica."""
+    
+    def extrair_dna(self, amostra: str) -> str:
+        return f"Kit Bioquímico: Extração de DNA da amostra {amostra} - DNA extraído com sucesso"
+    
+    def extrair_proteina(self, amostra: str) -> str:
+        return f"Kit Bioquímico: Extração de proteína da amostra {amostra} - Proteína extraída com sucesso"
+
+
+# Implementações de reagentes
+class ReagentesMoleculares:
+    """Reagentes para análise molecular."""
+    
+    def preparar_buffer(self, tipo: str) -> str:
+        return f"Reagentes Moleculares: Preparando buffer {tipo} - buffer preparado com sucesso"
 
 
 class EquipamentoLaboratorialFactory(ABC):
@@ -112,6 +158,16 @@ class EquipamentoLaboratorialFactory(ABC):
     def criar_espectrofotometro(self) -> Espectrofotometro:
         """Cria um espectrofotômetro especializado."""
         pass
+    
+    @abstractmethod
+    def criar_kit_extracao(self) -> KitExtracao:
+        """Cria um kit de extração especializado."""
+        pass
+    
+    @abstractmethod
+    def criar_reagentes(self) -> Reagentes:
+        """Cria reagentes especializados."""
+        pass
 
 
 class GeneticaFactory(EquipamentoLaboratorialFactory):
@@ -125,6 +181,12 @@ class GeneticaFactory(EquipamentoLaboratorialFactory):
     
     def criar_espectrofotometro(self) -> Espectrofotometro:
         return EspectrofotometroGenetico()
+    
+    def criar_kit_extracao(self) -> KitExtracao:
+        return KitGenetico()
+    
+    def criar_reagentes(self) -> Reagentes:
+        return ReagentesMoleculares()
 
 
 class BioquimicaFactory(EquipamentoLaboratorialFactory):
@@ -138,6 +200,12 @@ class BioquimicaFactory(EquipamentoLaboratorialFactory):
     
     def criar_espectrofotometro(self) -> Espectrofotometro:
         return EspectrofotometroBioquimico()
+    
+    def criar_kit_extracao(self) -> KitExtracao:
+        return KitBioquimico()
+    
+    def criar_reagentes(self) -> Reagentes:
+        return ReagentesMoleculares()
 
 
 class MolecularFactory(EquipamentoLaboratorialFactory):
@@ -151,6 +219,12 @@ class MolecularFactory(EquipamentoLaboratorialFactory):
     
     def criar_espectrofotometro(self) -> Espectrofotometro:
         return EspectrofotometroMolecular()
+    
+    def criar_kit_extracao(self) -> KitExtracao:
+        return KitGenetico()
+    
+    def criar_reagentes(self) -> Reagentes:
+        return ReagentesMoleculares()
 
 
 class FactoryProvider:

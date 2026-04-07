@@ -1,7 +1,7 @@
 # Design Patterns em Python - Sistema de Bioinformática
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
-![Patterns](https://img.shields.io/badge/Design_Patterns-23-green.svg)
+![Patterns](https://img.shields.io/badge/Design_Patterns-23-blue.svg)
 ![Bioinformatics](https://img.shields.io/badge/Bioinformatics-Genomics-orange.svg)
 
 Este projeto demonstra a implementação de padrões de projeto (Design Patterns) em Python, aplicados a um sistema de bioinformática para análise genômica e proteômica.
@@ -28,9 +28,7 @@ DesignPatternsPython/
 │   │   ├── abstract_factory.py # Abstract Factory
 │   │   ├── builder.py          # Builder
 │   │   ├── prototype.py        # Prototype
-│   │   ├── singleton.py        # Singleton
-│   │   ├── multiton.py         # Multiton
-│   │   └── object_pool.py      # Object Pool
+│   │   └── singleton.py        # Singleton
 │   ├── estruturais/           # Padrões estruturais
 │   │   ├── adapter.py          # Adapter
 │   │   ├── bridge.py           # Bridge
@@ -38,16 +36,18 @@ DesignPatternsPython/
 │   │   ├── decorator.py        # Decorator
 │   │   ├── facade.py           # Facade
 │   │   ├── flyweight.py        # Flyweight
-│   │   ├── front_controller.py # Front Controller
 │   │   └── proxy.py            # Proxy
-│   └── comportamentais/        # Padrões comportamentais
-│       ├── command.py          # Command
-│       ├── iterator.py         # Iterator
-│       ├── mediator.py         # Mediator
-│       ├── observer.py         # Observer
-│       ├── state.py            # State
-│       ├── template_method.py  # Template Method
-│       └── visitor.py          # Visitor
+│   ├── comportamentais/        # Padrões comportamentais
+│   │   ├── chain_of_responsibility.py # Chain of Responsibility
+│   │   ├── command.py          # Command
+│   │   ├── iterator.py         # Iterator
+│   │   ├── mediator.py         # Mediator
+│   │   ├── memento.py          # Memento
+│   │   ├── observer.py         # Observer
+│   │   ├── state.py            # State
+│   │   ├── strategy.py         # Strategy
+│   │   ├── template_method.py  # Template Method
+│   │   └── visitor.py          # Visitor
 ├── domain/                     # Classes de domínio
 │   ├── __init__.py
 │   ├── amostra_biologica.py  # Modelos de amostras biológicas
@@ -436,6 +436,31 @@ print(f"Log registrado: {resultado['log_id']}")
 
 ## Padrões Comportamentais
 
+### Chain of Responsibility
+
+**Propósito:** Passar requisições por uma corrente de handlers, onde cada um decide processar ou passar adiante.
+
+**Implementação:** Pipeline de validação e processamento de sequências biológicas:
+
+- **Validadores:** DNA, RNA e qualidade de sequências
+- **Filtros:** Contaminação e complexidade
+- **Processadores:** Análise final e geração de resultados
+
+```python
+# Exemplo: Chain of Responsibility para processamento de sequências
+from patterns.comportamentais.chain_of_responsibility import SequenceAnalysisSystem
+
+# Criar sistema com cadeia de handlers
+sistema = SequenceAnalysisSystem()
+
+# Analisar sequência através da cadeia
+resultado = sistema.analyze_sequence("ATCGATCGATCG", "DNA")
+if resultado.is_valid:
+    print(f"Sequência válida: {resultado.processing_steps}")
+else:
+    print(f"Erros: {resultado.errors}")
+```
+
 ### Command
 
 **Propósito:** Encapsular requisições como objetos, permitindo parametrização, fila e operações.
@@ -549,6 +574,37 @@ sequenciador.sequenciar_amostra("Amostra_001")
 # O mediador coordena automaticamente o fluxo completo
 ```
 
+### Memento
+
+**Propósito:** Salvar e restaurar estado anterior de objetos sem expor detalhes de implementação.
+
+**Implementação:** Sistema de checkpoint para experimentos genômicos:
+
+- **Originator:** Experimentos que podem salvar/restaurar estados
+- **Memento:** Snapshots do estado do experimento
+- **Caretaker:** Gerenciador de histórico de estados
+
+```python
+# Exemplo: Memento para undo/redo em experimentos
+from patterns.comportamentais.memento import ExperimentManager
+
+# Criar gerenciador de experimentos
+manager = ExperimentManager()
+manager.create_experiment("EXP001", "ATCGATCG", "alignment")
+
+# Modificar e executar análise
+manager.modify_experiment(sequence="ATCGATCGATCGATCG")
+manager.run_analysis()
+
+# Desfazer alterações
+manager.undo()  # Volta estado anterior
+manager.redo()  # Refaz alteração
+
+# Verificar histórico
+historico = manager.get_history()
+print(f"Estados salvos: {len(historico)}")
+```
+
 ### Observer
 
 **Propósito:** Definir dependência um-para-muitos, notificando mudanças automaticamente.
@@ -586,6 +642,36 @@ pesquisador2.definir_interesses([TipoEvento.ANALISE_FALHOU])
 # Executar análise e notificar observadores
 analise.iniciar_analise()
 analise.concluir_analise({"variantes": 42, "qualidade": "alta"})
+```
+
+### Strategy
+
+**Propósito:** Definir família de algoritmos intercambiáveis, permitindo variação independente.
+
+**Implementação:** Diferentes algoritmos de alinhamento de sequências:
+
+- **Needleman-Wunsch:** Alinhamento global exato
+- **Smith-Waterman:** Alinhamento local exato
+- **BLAST:** Alinhamento heurístico rápido
+- **K-mer:** Alinhamento aproximado ultra-rápido
+
+```python
+# Exemplo: Strategy para diferentes algoritmos de alinhamento
+from patterns.comportamentais.strategy import (
+    SequenceAligner, NeedlemanWunschStrategy, SmithWatermanStrategy, BLASTStrategy
+)
+
+# Criar alinhador com estratégia inicial
+aligner = SequenceAligner(NeedlemanWunschStrategy())
+
+# Mudar estratégia dinamicamente
+aligner.set_strategy(SmithWatermanStrategy())
+result_local = aligner.align_sequences("ATCGATCG", "ATCGATCG")
+
+# Comparar estratégias
+benchmark = AlignmentBenchmark()
+best_strategy = benchmark.get_best_strategy("ATCGATCG", "GCTAGCTA", "identity")
+print(f"Melhor estratégia: {best_strategy[0]}")
 ```
 
 ### State
@@ -749,7 +835,7 @@ print(f"\nAlvos terapêuticos identificados: {len(alvos)}")
 1. **Flexibilidade:** Troca de algoritmos de alinhamento sem modificar análises
 2. **Reusabilidade:** Equipamentos compartilhados entre experimentos
 3. **Manutenibilidade:** Separação clara entre tipos de dados e processamento
-4. **Escalabilidade:** Pools de objetos para lidar com grande volume de dados
+4. **Escalabilidade:** Singleton e Flyweight para lidar com grande volume de dados
 5. **Segurança:** Proxy controlando acesso a dados sensíveis
 6. **Performance:** Flyweight otimizando memória em análises em massa
 
